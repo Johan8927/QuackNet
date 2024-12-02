@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\Ducks;
+use App\Entity\UserSecurity;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -10,13 +10,13 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 
 /**
- * @extends ServiceEntityRepository<Ducks>
+ * @extends ServiceEntityRepository<UserSecurity>
  */
-class DucksRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
+class UserSecurityRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Ducks::class);
+        parent::__construct($registry, UserSecurity::class);
     }
 
     /**
@@ -24,7 +24,7 @@ class DucksRepository extends ServiceEntityRepository implements PasswordUpgrade
      */
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
-        if (!$user instanceof Ducks) {
+        if (!$user instanceof UserSecurity) {
             throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', $user::class));
         }
 
@@ -34,24 +34,24 @@ class DucksRepository extends ServiceEntityRepository implements PasswordUpgrade
     }
 
     //    /**
-    //     * @return Ducks[] Returns an array of Ducks objects
+    //     * @return UserSecurity[] Returns an array of UserSecurity objects
     //     */
     //    public function findByExampleField($value): array
     //    {
-    //        return $this->createQueryBuilder('d')
-    //            ->andWhere('d.exampleField = :val')
+    //        return $this->createQueryBuilder('u')
+    //            ->andWhere('u.exampleField = :val')
     //            ->setParameter('val', $value)
-    //            ->orderBy('d.id', 'ASC')
+    //            ->orderBy('u.id', 'ASC')
     //            ->setMaxResults(10)
     //            ->getQuery()
     //            ->getResult()
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Ducks
+    //    public function findOneBySomeField($value): ?UserSecurity
     //    {
-    //        return $this->createQueryBuilder('d')
-    //            ->andWhere('d.exampleField = :val')
+    //        return $this->createQueryBuilder('u')
+    //            ->andWhere('u.exampleField = :val')
     //            ->setParameter('val', $value)
     //            ->getQuery()
     //            ->getOneOrNullResult()

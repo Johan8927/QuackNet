@@ -3,9 +3,15 @@
 namespace App\Entity;
 
 use AllowDynamicProperties;
+use App\Form\QuackType;
 use App\Repository\QuackRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormTypeInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 #[AllowDynamicProperties] #[ORM\Entity(repositoryClass: QuackRepository::class)]
 class Quack
@@ -13,6 +19,11 @@ class Quack
     public function __construct()
     {
         $this->created_at = new \DateTime();
+        $this->updated_at = new \DateTime();
+        $this->duckscreen = 'default';
+        $this->ducktag = '#default';
+
+
     }
 
 
@@ -27,11 +38,11 @@ class Quack
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $created_at;
 
-    #[ORM\Column(type: Types::TEXT)]
-    private ?string $username = null;
+    #[ORM\Column(type: Types::STRING)]
+    private ?string $username;
 
     #[ORM\Column(type: Types::STRING)]
-    private ?string $duckscreen = null;
+    private ?string $duckscreen;
 
     #[ORM\Column(type: Types::TEXT)]
     private?string $ducktag = null;
@@ -107,4 +118,36 @@ class Quack
         $this->ducktag = $ducktag;
     }
 
+    public function getParent()
+    {
+
+        return new QuackType();
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'data_class' => Quack::class,
+        ]);
+    }
+
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+
+    }
+
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+
+    }
+
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+
+    }
+
+    public function getBlockPrefix(): string
+    {
+        return 'app_quack';
+    }
 }
