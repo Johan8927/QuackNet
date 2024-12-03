@@ -10,6 +10,8 @@ use Doctrine\Persistence\ManagerRegistry;
 
 class QuackRepository extends ServiceEntityRepository
 {
+
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Quack::class);
@@ -18,9 +20,9 @@ class QuackRepository extends ServiceEntityRepository
 
     public function findAll(): array
     {
-        return $this->registry
-            ->getRepository(Quack::class)
-            ->findAll();
-
+        return $this->createQueryBuilder('q')
+            ->orderBy('q.id', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
 }

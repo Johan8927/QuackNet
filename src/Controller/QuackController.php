@@ -25,6 +25,9 @@ final class QuackController extends AbstractController
     #[Route('/new', name: 'app_quack_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        // Vérification de l'accès
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $quack = new Quack();
         $form = $this->createForm(QuackType::class, $quack);
         $form->handleRequest($request);
@@ -53,6 +56,9 @@ final class QuackController extends AbstractController
     #[Route('/{id}/edit', name: 'app_quack_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Quack $quack, EntityManagerInterface $entityManager): Response
     {
+        // Vérification de l'accès
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
         $form = $this->createForm(QuackType::class, $quack);
         $form->handleRequest($request);
 
@@ -71,7 +77,10 @@ final class QuackController extends AbstractController
     #[Route('/{id}', name: 'app_quack_delete', methods: ['POST'])]
     public function delete(Request $request, Quack $quack, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$quack->getId(), $request->getPayload()->getString('_token'))) {
+        // Vérification de l'accès
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        if ($this->isCsrfTokenValid('delete' . $quack->getId(), $request->get('_token'))) {
             $entityManager->remove($quack);
             $entityManager->flush();
         }
