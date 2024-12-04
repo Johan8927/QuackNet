@@ -5,6 +5,8 @@ namespace App\Entity;
 use AllowDynamicProperties;
 use App\Form\QuackType;
 use App\Repository\QuackRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -22,6 +24,7 @@ class Quack
         $this->updated_at = new \DateTime();
         $this->duckscreen = 'default';
         $this->ducktag = '#default';
+        $this->comments = new ArrayCollection();
 
 
     }
@@ -46,6 +49,12 @@ class Quack
 
     #[ORM\Column(type: Types::TEXT)]
     private?string $ducktag = null;
+
+    /**
+     * @var Collection<int, Comments>
+     */
+    #[ORM\OneToMany(targetEntity: Comments::class, mappedBy: 'quack')]
+    private Collection $comments;
 
 
 
@@ -149,5 +158,35 @@ class Quack
     public function getBlockPrefix(): string
     {
         return 'app_quack';
+    }
+
+    /**
+     * @return Collection<int, Comments>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comments $comment): static
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setMessages($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comments $comment): static
+    {
+        if ($this->comments->removeElement($comment)) {
+            // set the owning side to null (unless already changed)
+            if ($comment->getMessages() === $this) {
+                $comment->setMessages(null);
+            }
+        }
+
+        return $this;
     }
 }
