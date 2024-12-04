@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\DucksRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\DocBlock\Tags\Author;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: DucksRepository::class)]
@@ -30,7 +31,9 @@ class Ducks implements UserInterface
     #[ORM\Column(type: Types::TEXT)]
     private ?string $password = null;
 
-
+   // #[ORM\ManyToOne(inversedBy: 'comments')]
+  ///  #[ORM\JoinColumn(nullable: false)]
+ //   private ?Author $author = null;
     public function getId(): ?int
     {
         return $this->id;
