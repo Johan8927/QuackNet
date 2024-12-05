@@ -116,4 +116,5 @@ class Ducks implements UserInterface
 
         return ['ROLE_USER'];
     }
+
 }

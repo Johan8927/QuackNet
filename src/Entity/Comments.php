@@ -81,6 +81,15 @@ class Comments
         return $this->createdAt;
     }
 
+    public function setMessages(Quack $param)
+    {
+        $this->quack = $param;
+    }
+
+    public function getMessages()
+    {
+        return $this->quack;
+    }
 
 
 }

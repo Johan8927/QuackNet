@@ -44,6 +44,30 @@ class Quack
     #[ORM\Column(type: Types::STRING)]
     private ?string $username;
 
+
+    #[ORM\Column(type: Types::STRING)]
+    private ?string $author;
+
+    public function getUpdatedAt(): \DateTime
+    {
+        return $this->updated_at;
+    }
+
+    public function setUpdatedAt(\DateTime $updated_at): void
+    {
+        $this->updated_at = $updated_at;
+    }
+
+    public function getAuthor(): ?string
+    {
+        return $this->author;
+    }
+
+    public function setAuthor(?string $author): void
+    {
+        $this->author = $author;
+    }
+
     #[ORM\Column(type: Types::STRING)]
     private ?string $duckscreen;
 
@@ -127,13 +151,13 @@ class Quack
         $this->ducktag = $ducktag;
     }
 
-    public function getParent()
+    public function getParent(): QuackType
     {
 
         return new QuackType();
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Quack::class,

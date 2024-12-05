@@ -25,20 +25,20 @@ final class QuackController extends AbstractController
     }
 
     #[Route('/new', name: 'app_quack_new', methods: ['GET', 'POST'])]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
-        // Vérification de l'accès
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
         $quack = new Quack();
         $form = $this->createForm(QuackType::class, $quack);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $quack->setAuthor($this->getUser());
             $entityManager->persist($quack);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_quack_index', [], Response::HTTP_SEE_OTHER);
+            $this->addFlash('success', 'Quack created successfully.');
+            return $this->redirectToRoute('app_quack_show', ['id' => $quack->getId()], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('quack/new.html.twig', [
@@ -56,19 +56,17 @@ final class QuackController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_quack_edit', methods: ['GET', 'POST'])]
-    #[IsGranted(DuckVoter::EDIT)]
+    #[IsGranted(DuckVoter::EDIT, subject: 'quack')]
     public function edit(Request $request, Quack $quack, EntityManagerInterface $entityManager): Response
     {
-        // Vérification de l'accès
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
         $form = $this->createForm(QuackType::class, $quack);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_quack_index', [], Response::HTTP_SEE_OTHER);
+            $this->addFlash('success', 'Quack updated successfully.');
+            return $this->redirectToRoute('app_quack_show', ['id' => $quack->getId()], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('quack/edit.html.twig', [
@@ -78,15 +76,13 @@ final class QuackController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_quack_delete', methods: ['POST'])]
-    #[IsGranted(DuckVoter::DELETE)]
+    #[IsGranted(DuckVoter::DELETE, subject: 'quack')]
     public function delete(Request $request, Quack $quack, EntityManagerInterface $entityManager): Response
     {
-        // Vérification de l'accès
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
-        if ($this->isCsrfTokenValid('delete' . $quack->getId(), $request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $quack->getId(), $request->request->get('_token'))) {
             $entityManager->remove($quack);
             $entityManager->flush();
+            $this->addFlash('success', 'Quack deleted successfully.');
         }
 
         return $this->redirectToRoute('app_quack_index', [], Response::HTTP_SEE_OTHER);
