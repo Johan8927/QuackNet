@@ -5,11 +5,13 @@ namespace App\Controller;
 use App\Entity\Quack;
 use App\Form\QuackType;
 use App\Repository\QuackRepository;
+use App\Security\Voter\DuckVoter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/quack')]
 final class QuackController extends AbstractController
@@ -54,6 +56,7 @@ final class QuackController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_quack_edit', methods: ['GET', 'POST'])]
+    #[IsGranted(DuckVoter::EDIT)]
     public function edit(Request $request, Quack $quack, EntityManagerInterface $entityManager): Response
     {
         // Vérification de l'accès
@@ -75,6 +78,7 @@ final class QuackController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_quack_delete', methods: ['POST'])]
+    #[IsGranted(DuckVoter::DELETE)]
     public function delete(Request $request, Quack $quack, EntityManagerInterface $entityManager): Response
     {
         // Vérification de l'accès
