@@ -2,15 +2,25 @@
 
 namespace App\Entity;
 
+use AllowDynamicProperties;
 use App\Repository\DucksRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use phpDocumentor\Reflection\DocBlock\Tags\Author;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-#[ORM\Entity(repositoryClass: DucksRepository::class)]
+#[AllowDynamicProperties] #[ORM\Entity(repositoryClass: DucksRepository::class)]
 class Ducks implements UserInterface
 {
+    public function __construct(){
+        $this->created_at = new \DateTime();
+        $this->updated_at = new \DateTime();
+        $this->duckscreen = 'default';
+        $this->ducktag = '#default';
+        $this->comments = new ArrayCollection();
+        $this->author = new ArrayCollection();
+    }
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

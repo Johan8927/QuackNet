@@ -2,34 +2,15 @@
 
 namespace App\Entity;
 
-use AllowDynamicProperties;
-use App\Form\QuackType;
 use App\Repository\QuackRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormTypeInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
-#[AllowDynamicProperties] #[ORM\Entity(repositoryClass: QuackRepository::class)]
+#[ORM\Entity(repositoryClass: QuackRepository::class)]
 class Quack
 {
-    public function __construct()
-    {
-        $this->created_at = new \DateTime();
-        $this->updated_at = new \DateTime();
-        $this->duckscreen = 'default';
-        $this->ducktag = '#default';
-        $this->comments = new ArrayCollection();
-
-
-    }
-
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -39,82 +20,36 @@ class Quack
     private ?string $content = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $created_at;
+    private ?\DateTimeInterface $created_at = null;
 
-    #[ORM\Column(type: Types::STRING)]
-    private ?string $username;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $updated_at = null;
 
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
+    private ?string $duckscreen = null;
 
-    #[ORM\Column(type: Types::STRING)]
-    private ?string $author;
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $ducktag = null;
 
-    public function getUpdatedAt(): \DateTime
-    {
-        return $this->updated_at;
-    }
+    #[ORM\ManyToOne(targetEntity: UserSecurity::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?UserSecurity $author = null;
 
-    public function setUpdatedAt(\DateTime $updated_at): void
-    {
-        $this->updated_at = $updated_at;
-    }
-
-    public function getAuthor(): ?string
-    {
-        return $this->author;
-    }
-
-    public function setAuthor(?string $author): void
-    {
-        $this->author = $author;
-    }
-
-    #[ORM\Column(type: Types::STRING)]
-    private ?string $duckscreen;
-
-    #[ORM\Column(type: Types::TEXT)]
-    private?string $ducktag = null;
-
-    /**
-     * @var Collection<int, Comments>
-     */
-    #[ORM\OneToMany(targetEntity: Comments::class, mappedBy: 'quack')]
+    #[ORM\OneToMany(targetEntity: Comments::class, mappedBy: 'quack', cascade: ['persist', 'remove'])]
     private Collection $comments;
 
+    #[ORM\Column(type: Types::STRING)]
+    private ?string $username = null;
 
-
-    public function getDuckscreen(): ?string
+    public function __construct()
     {
-        return $this->duckscreen;
-    }
+        $this->created_at = new \DateTime();
+        $this->updated_at = new \DateTime();
+        $this->comments = new ArrayCollection();
+        $this->duckscreen = 'default';
+        $this->ducktag = '#default';
+        $this->author = new UserSecurity();
 
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getContent(): ?string
-    {
-        return $this->content;
-    }
-
-    public function setContent(string $content): static
-    {
-        $this->content = $content;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeInterface
-    {
-        return $this->created_at;
-    }
-
-    public function setCreatedAt(\DateTimeInterface $created_at): static
-    {
-        $this->created_at = $created_at;
-
-        return $this;
     }
 
     public function getUsername(): ?string
@@ -127,18 +62,59 @@ class Quack
         $this->username = $username;
     }
 
-    public function getDuckname(): ?string
+    // Getters et setters
+
+    public function getId(): ?int
     {
-        return $this->duckname;
+        return $this->id;
     }
 
-    public function setDuckname(?string $duckname): void
+    public function getContent(): ?string
     {
-        $this->duckname = $duckname;
+        return $this->content;
     }
-    public function setDuckscreen(?string $duckscreen): void
+
+    public function setContent(string $content): self
+    {
+        $this->content = $content;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $created_at): self
+    {
+        $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updated_at;
+    }
+
+    public function setUpdatedAt(\DateTimeInterface $updated_at): self
+    {
+        $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    public function getDuckscreen(): ?string
+    {
+        return $this->duckscreen;
+    }
+
+    public function setDuckscreen(?string $duckscreen): self
     {
         $this->duckscreen = $duckscreen;
+
+        return $this;
     }
 
     public function getDucktag(): ?string
@@ -146,42 +122,23 @@ class Quack
         return $this->ducktag;
     }
 
-    public function setDucktag(?string $ducktag): void
+    public function setDucktag(?string $ducktag): self
     {
         $this->ducktag = $ducktag;
+
+        return $this;
     }
 
-    public function getParent(): QuackType
+    public function getAuthor(): ?UserSecurity
     {
-
-        return new QuackType();
+        return $this->author;
     }
 
-    public function configureOptions(OptionsResolver $resolver): void
+    public function setAuthor(?UserSecurity $author): self
     {
-        $resolver->setDefaults([
-            'data_class' => Quack::class,
-        ]);
-    }
+        $this->author = $author;
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-
-    }
-
-    public function buildView(FormView $view, FormInterface $form, array $options)
-    {
-
-    }
-
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
-
-    }
-
-    public function getBlockPrefix(): string
-    {
-        return 'app_quack';
+        return $this;
     }
 
     /**
@@ -192,22 +149,22 @@ class Quack
         return $this->comments;
     }
 
-    public function addComment(Comments $comment): static
+    public function addComment(Comments $comment): self
     {
         if (!$this->comments->contains($comment)) {
             $this->comments->add($comment);
-            $comment->setMessages($this);
+            $comment->setQuack($this);
         }
 
         return $this;
     }
 
-    public function removeComment(Comments $comment): static
+    public function removeComment(Comments $comment): self
     {
         if ($this->comments->removeElement($comment)) {
-            // set the owning side to null (unless already changed)
-            if ($comment->getMessages() === $this) {
-                $comment->setMessages(null);
+            // Supprimez la relation côté `Comments` si nécessaire
+            if ($comment->getQuack() === $this) {
+                $comment->setQuack(null);
             }
         }
 

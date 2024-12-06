@@ -32,14 +32,15 @@ final class QuackController extends AbstractController
         $form = $this->createForm(QuackType::class, $quack);
         $form->handleRequest($request);
 
+
         if ($form->isSubmitted() && $form->isValid()) {
             $quack->setAuthor($this->getUser());
-            $entityManager->persist($quack);
+            $entityManager->persist($quack,);
             $entityManager->flush();
-
             $this->addFlash('success', 'Quack created successfully.');
             return $this->redirectToRoute('app_quack_show', ['id' => $quack->getId()], Response::HTTP_SEE_OTHER);
         }
+
 
         return $this->render('quack/new.html.twig', [
             'quack' => $quack,
