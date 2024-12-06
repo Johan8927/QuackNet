@@ -127,4 +127,9 @@ class Ducks implements UserInterface
         return ['ROLE_USER'];
     }
 
+    public function getOwner()
+    {
+        return $this->author;
+    }
+
 }

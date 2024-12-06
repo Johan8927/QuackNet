@@ -5,6 +5,7 @@ namespace App\Entity;
 use AllowDynamicProperties;
 use App\Repository\UserSecurityRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -12,6 +13,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 class UserSecurity implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    const loggedIn = AccessDeniedException::class;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -110,5 +112,13 @@ class UserSecurity implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    private function user_is_logged_in(): bool
+    {
+        // Logic to check if the user is logged in
+        // For example, you can use a session variable
+        return isset($_SESSION['logged_in']) && $_SESSION['logged_in'];
+
     }
 }

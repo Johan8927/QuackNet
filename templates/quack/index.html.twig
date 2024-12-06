@@ -14,7 +14,7 @@
             <th>Id</th>
             <th>Content</th>
             <th>Created_at</th>
-            <th>actions</th>
+            <th>User_name</th>
         </tr>
         </thead>
         <tbody>
@@ -24,6 +24,7 @@
                 <a href="{{ path('app_quack_show', {'id': quack.id}) }}" class="button">Show</a>
                 <td>{{ quack.content }}</td>
                 <td>{{ quack.createdAt ? quack.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+
                 <a href="{{ path('app_quack_edit', {'id': quack.id}) }}" class="button">Edit</a>
                 <a href="{{ path('app_quack_delete', {'id': quack.id}) }}" class="button">Delete</a>
                 <a href="{{ path('app_quack_new') }}" id="create-new" class="button">Create new</a>

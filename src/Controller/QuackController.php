@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Quack;
+use App\Entity\UserSecurity;
 use App\Form\QuackType;
 use App\Repository\QuackRepository;
 use App\Security\Voter\DuckVoter;
@@ -60,6 +61,17 @@ final class QuackController extends AbstractController
     #[IsGranted(DuckVoter::EDIT, subject: 'quack')]
     public function edit(Request $request, Quack $quack, EntityManagerInterface $entityManager): Response
     {
+
+        // si author n'est pas connecté
+        /*
+        if (!$this->getUser() || $quack->getAuthor()->getId()!== $this->getUser()->getId()) {
+            throw $this->createAccessDeniedException('You cannot edit this quack.');
+        }
+        if (!$this->isGranted(DuckVoter::EDIT, $quack)) {
+            throw $this->createAccessDeniedException('You cannot edit this quack.');
+        }
+        */
+
         $form = $this->createForm(QuackType::class, $quack);
         $form->handleRequest($request);
 
@@ -78,14 +90,13 @@ final class QuackController extends AbstractController
 
     #[Route('/{id}', name: 'app_quack_delete', methods: ['POST'])]
     #[IsGranted(DuckVoter::DELETE, subject: 'quack')]
-    public function delete(Request $request, Quack $quack, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, Quack $quack, EntityManagerInterface $entityManager): \Symfony\Component\HttpFoundation\RedirectResponse
     {
         if ($this->isCsrfTokenValid('delete' . $quack->getId(), $request->request->get('_token'))) {
             $entityManager->remove($quack);
             $entityManager->flush();
             $this->addFlash('success', 'Quack deleted successfully.');
         }
-
-        return $this->redirectToRoute('app_quack_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_quack_index');
     }
 }

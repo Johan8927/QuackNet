@@ -4,14 +4,8 @@
 
 {% block body %}
     <h1>Edit Quack</h1>
-
     {{ include('quack/_form.html.twig', {'button_label': 'Update'}) }}
-
-    <a href="{{ path('app_quack_index') }}" class="button">back to list</a>
+    <a href="{{ path('app_quack_index') }}" class="button">Back to list</a>
     <hr>
-    <a href="{{ path('app_quack_edit', {'id': quack.id}) }}" class="button">edit</a>
-    <hr>
-    <a href="{{ path('app_quack_delete', {'id': quack.id}) }}" class="button">Delete</a>
-
     {{ include('quack/_delete_form.html.twig') }}
 {% endblock %}

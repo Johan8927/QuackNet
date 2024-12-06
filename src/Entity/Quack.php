@@ -167,7 +167,6 @@ class Quack
                 $comment->setQuack(null);
             }
         }
-
         return $this;
     }
 }

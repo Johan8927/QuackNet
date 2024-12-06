@@ -4,30 +4,31 @@ namespace App\Security\Voter;
 
 use App\Entity\Ducks;
 use App\Entity\Quack;
+use App\Entity\UserSecurity;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 final class DuckVoter extends Voter
 {
-    public const EDIT = 'DUCK_EDIT';
-    public const VIEW = 'DUCK_VIEW';
-    public const DELETE = 'DUCK_DELETE';
+    public const EDIT = 'QUACK_EDIT';
+    public const VIEW = 'QUACK_VIEW';
+    public const DELETE = 'QUACK_DELETE';
 
     protected function supports(string $attribute, mixed $subject): bool
     {
         return in_array($attribute, [self::EDIT, self::VIEW, self::DELETE])
-            && $subject instanceof Ducks;
+            && $subject instanceof Quack;
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
-        if (!$user instanceof UserInterface) {
+        if (!$user instanceof UserSecurity) {
             return false;
         }
 
-        if (!$subject instanceof Ducks) {
+        if (!$subject instanceof Quack) {
             return false;
         }
 
@@ -43,21 +44,21 @@ final class DuckVoter extends Voter
         return false;
     }
 
-    private function canView(Ducks $duck, UserInterface $user): bool
+    private function canView(Quack $quack, UserSecurity $user): bool
     {
-        // Add logic for viewing a duck
-        return true; // For now, allow anyone to view
+        // Tout le monde peut voir un quack
+        return true;
     }
 
-    private function canEdit(Ducks $duck, UserInterface $user): bool
+    private function canEdit(Quack $quack, UserSecurity $user): bool
     {
-        // Check if the user is the owner of the duck
-        return $user === $duck->getOwner();
+        // L'utilisateur peut éditer le quack s'il en est le propriétaire
+        return $user === $quack->getAuthor();
     }
 
-    private function canDelete(Ducks $duck, UserInterface $user): bool
+    private function canDelete(Quack $quack, UserSecurity $user): bool
     {
-        // For now, use the same logic as editing
-        return $this->canEdit($duck, $user);
+        // L'utilisateur peut supprimer le quack s'il en est le propriétaire
+        return $user === $quack->getAuthor();
     }
 }
