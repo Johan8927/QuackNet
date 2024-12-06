@@ -14,26 +14,29 @@
             <th>Id</th>
             <th>Content</th>
             <th>Created_at</th>
-            <th>User_name</th>
+            <th>Author</th>
         </tr>
         </thead>
         <tbody>
         {% for quack in quacks %}
             <tr>
                 <td>{{ quack.id }}</td>
-                <a href="{{ path('app_quack_show', {'id': quack.id}) }}" class="button">Show</a>
                 <td>{{ quack.content }}</td>
                 <td>{{ quack.createdAt ? quack.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-
-                <a href="{{ path('app_quack_edit', {'id': quack.id}) }}" class="button">Edit</a>
-                <a href="{{ path('app_quack_delete', {'id': quack.id}) }}" class="button">Delete</a>
-                <a href="{{ path('app_quack_new') }}" id="create-new" class="button">Create new</a>
+                <td>{{ quack.author ? quack.author.username : '' }}</td>
+                <td>
+                    <a href="{{ path('app_quack_show', {'id': quack.id}) }}" class="button">Show</a>
+                    <a href="{{ path('app_quack_edit', {'id': quack.id}) }}" class="button">Edit</a>
+                    <a href="{{ path('app_quack_delete', {'id': quack.id}) }}" class="button">Delete</a>
+                </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="4">no records found</td>
+                <td colspan="5">no records found</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
+
+    <a href="{{ path('app_quack_new') }}" id="create-new" class="button">Create new</a>
 {% endblock %}
